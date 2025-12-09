@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgis
+  namespace: data-sync
 spec:
   selector:
     matchLabels:
@@ -20,8 +21,8 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgis-secrets
-                  key: POSTGRES_PASSWORDS
+                  name: data-sync-secrets
+                  key: postgres_password
           ports:
             - containerPort: 5432
               name: postgis-port

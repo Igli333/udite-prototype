@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgis
-  labels:
-    app: postgis
+  namespace: data-sync
 spec:
   ports:
     - port: 5432
       name: postgis
-  clusterIP: None
+      targetPort: 5432
   selector:
     app: postgis
+  type: ClusterIP

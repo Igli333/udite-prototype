@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-elt
+spec:
+  selector:
+    matchLabels:
+      app: ms-elt
+  replicas: 1 # To be updated
+  template:
+    metadata:
+      labels:
+        app: ms-elt
+    spec:
+      containers:
+        - name: ms-elt
+          image: elt:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5002

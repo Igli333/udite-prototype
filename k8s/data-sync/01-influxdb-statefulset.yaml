@@ -22,6 +22,14 @@ spec:
           ports:
             - containerPort: 8086
               name: influxdb
+          env:
+            - name: INFLUX_USERNAME
+              value: root
+            - name: INFLUX_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: influx_db
+                  name: data-sync-secrets
           volumeMounts:
             - mountPath: /var/lib/influxdb2
               name: data
