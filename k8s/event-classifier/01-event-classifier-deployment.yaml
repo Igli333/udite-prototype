@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-event-classifier
+  namespace: event-classifier
+spec:
+  selector:
+    matchLabels:
+      app: ms-event-classifier
+  replicas: 1 # To be updated
+  template:
+    metadata:
+      labels:
+        app: ms-event-classifier
+    spec:
+      containers:
+        - name: ms-event-classifier
+          image: udite/ms-event-classifier:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5001
+      volumes:
+        - name: event-classifier-volume
+          persistentVolumeClaim:
+            claimName: event-classifier-claim

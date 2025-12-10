@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World! This is the Data Synchronizer of UDiTE'
+    return 'Hello World! This is the Data Synchronizer of UDiTE\n'
 
 
 if __name__ == '__main__':

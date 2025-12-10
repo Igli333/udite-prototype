@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-simulator
+  namespace: simulator
+spec:
+  selector:
+    matchLabels:
+      app: ms-simulator
+  replicas: 1 # To be updated
+  template:
+    metadata:
+      labels:
+        app: ms-simulator
+    spec:
+      containers:
+        - name: ms-simulator
+          image: udite/ms-simulator:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000

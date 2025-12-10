@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-data-sync
+  namespace: data-sync
+spec:
+  selector:
+    matchLabels:
+      app: ms-data-sync
+  replicas: 1 # To be updated
+  template:
+    metadata:
+      labels:
+        app: ms-data-sync
+    spec:
+      containers:
+        - name: ms-data-sync
+          image: udite/ms-data-sync:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5002
