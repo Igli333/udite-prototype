@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: kafka
+  name: kafka-topic-init
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: topic-init
+          image: apache/kafka:4.1.1
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              
+              echo "Waiting for Kafka to be ready"
+              sleep 20
+              
+              BOOTSTRAP="kafka:9092"
+              
+              create_topic() {
+                /opt/kafka/bin/kafka-topic.sh \
+                --bootstrap-server $BOOTSTRAP
+                --create \
+                --if-not-exists \
+                --topic $1 \
+                --partitions $2 \
+                --replication-factor $2
+              }
+              
+              create_topic traffic.sensors 32 3
+              create_topic transport.sensors 32 3
+              create_topic utilities.sensors 32 3
+              create_topic environment.sensors 32 3
+              create_topic telecom.sensors 32 3
+              create_topic green_infra.sensors 32 3
+              
+              create_topic emergency.alerts 6 3
+              create_topic emergency.commands 6 3
+              create_topic system.health 6 3
+              
+              echo "Kafka topics initialized."
