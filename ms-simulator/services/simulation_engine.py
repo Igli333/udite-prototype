@@ -1,4 +1,4 @@
-from domain.models import SimulationRequest, SimulationResult, Intervention
+from domain.models import SimulationRequest, SimulationResult, Intervention, TriggerType, SensorReading
 from services.data_connector import DataConnector
 import json
 import os
@@ -12,71 +12,86 @@ class SimulationEngine:
 
     def run_simulation(self, request: SimulationRequest) -> SimulationResult:
         """
-        Executes a simulation based on the request and current context.
+        Executes a simulation based on the aligned triggers and sensor readings.
         """
-
         
         # 1. Gather Context
         ctx_node = {}
         if request.target_id:
             ctx_node = self.data_connector.get_node_details(request.target_id)
         
-        # Assume a default district for this prototype
-        ctx_district = self.data_connector.get_district_status("district_1")
+        # Get mocked sensor readings mimicking Data Sync
+        readings = self.data_connector.get_district_readings("district_1")
 
-        # 2. Simulation Logic (Simple Rule-Based)
+        # 2. Simulation Logic
         severity = 0.0
         impact = "Minimal impact detected."
         interventions = []
         affected = []
 
-        if request.trigger_type == "NODE_FAILURE":
-            if ctx_node.get("node_type") == "TRAFFIC_LIGHT":
-                severity = 0.8
-                impact = "High traffic congestion expected due to signal failure."
-                affected = ["Road_A", "Road_B", "Intersection_5"]
-                interventions.append(
-                    Intervention(id="INT_001", description="Deploy Traffic Police to Intersection_5", estimated_impact="Reduce delay by 40%")
-                )
-                interventions.append(
-                   Intervention(id="INT_002", description="Reroute Public Transport Line 4", estimated_impact="Avoid deadlock") 
-                )
-            else:
-                 severity = 0.4
-                 impact = "Minor service degradation."
-                 affected = ["Local_Area"]
-
-        elif request.trigger_type == "CRITICAL_METRIC":
-             # Example: Flood level high
-             severity = 0.9
-             impact = "Critical infrastructure at risk."
-             affected = ["Sector_7", "Sector_8"]
-             interventions.append(
-                 Intervention(id="INT_003", description="Activate Flood Barriers", estimated_impact="Prevent flooding of Sector 7")
-             )
-
-        elif request.trigger_type == "TRAFFIC_JAM":
-            severity = 0.6
-            impact = "Severe congestion detected on main artery."
-            affected = ["Highway_1", "Downtown_Access"]
+        # --- EVENT CLASSIFIER / DATA SYNC ALIGNED LOGIC ---
+        
+        if request.trigger_type == TriggerType.GAS_LEAK_DETECTED:
+            severity = 0.95
+            impact = "CRITICAL: Gas leak detected. Explosion risk."
+            affected = ["Sector_residential_4", "School_District_2"]
             interventions.append(
-                Intervention(id="INT_004", description="Adjust Traffic Light Sync", estimated_impact="Improve flow by 15%")
+                Intervention(id="INT_GAS_01", description="Trigger Auto-Shutoff Valves", estimated_impact="Stop flow immediately")
             )
             interventions.append(
-                Intervention(id="INT_005", description="Open Emergency Lane", estimated_impact="Relieve congestion by 10%")
+                 Intervention(id="INT_GAS_02", description="Evacuate 500m Radius via SMS Alert", estimated_impact="Ensure resident safety")
             )
 
-        elif request.trigger_type == "ENVIRONMENTAL_ALERT":
-            # example: Air Quality Index dangerous
-            severity = 0.75
-            impact = "Hazardous air quality levels detected."
-            affected = ["City_Center", "Parks"]
+        elif request.trigger_type == TriggerType.FLOOD_RISK:
+            severity = 0.85
+            impact = "Rising water levels threaten low-lying infrastructure."
+            affected = ["River_Bank_Roads", "Subway_Stations_North"]
             interventions.append(
-                Intervention(id="INT_006", description="Issue Public Health Warning", estimated_impact="Reduce outdoor activity")
+                Intervention(id="INT_FLD_01", description="Deploy Mobile Barriers", estimated_impact="Prevent station flooding")
             )
+        
+        elif request.trigger_type == TriggerType.CELL_TOWER_DOWN:
+            severity = 0.7
+            impact = "Connectivity lost in Sector 3. Emergency comms at risk."
+            affected = ["Sector_3", "Business_Park"]
             interventions.append(
-                 Intervention(id="INT_007", description="Restrict Heavy Vehicle Access", estimated_impact="Reduce emission by 20%")
+                Intervention(id="INT_TEL_01", description="Deploy COW (Cell on Wheels)", estimated_impact="Restore 60% coverage")
             )
+
+        elif request.trigger_type == TriggerType.TRAFFIC_GRIDLOCK:
+            severity = 0.65
+            impact = "Standstill traffic impacting emergency response routes."
+            affected = ["Main_Highway_South", "Bridge_Access"]
+            interventions.append(
+                 Intervention(id="INT_TRF_01", description="Reroute signals to flush Highway South", estimated_impact="Clearing time 20min")
+            )
+
+        elif request.trigger_type == TriggerType.HOSPITAL_OVERLOAD:
+            severity = 0.9
+            impact = "ER Capacity exceeded. Patient intake stalled."
+            affected = ["City_General_Hospital"]
+            interventions.append(
+                Intervention(id="INT_HOS_01", description="Redirect ambulances to District 2 Clinics", estimated_impact="Load distribution balanced")
+            )
+
+        elif request.trigger_type == TriggerType.WILDFIRE_RISK_HIGH:
+            severity = 0.8
+            impact = "Dry conditions and wind favor rapid fire spread."
+            affected = ["National_Park_Border", "Suburbs_East"]
+            interventions.append(
+                Intervention(id="INT_FIR_01", description="Deploy Drones for Thermal Monitoring", estimated_impact="Early detection")
+            )
+
+        # --- LEGACY / FALLBACK ---
+        elif request.trigger_type == TriggerType.NODE_FAILURE:
+             severity = 0.5
+             impact = "Infrastructure node offline."
+             affected = ["Local_Access"]
+             interventions.append(Intervention(id="INT_GEN_01", description="Dispatch Technician", estimated_impact="Restore service in 2h"))
+
+        else:
+            impact = "Event type recognized but no specific simulation rule found."
+            severity = 0.1
 
         # 3. Construct Result
         result = SimulationResult(
@@ -85,7 +100,8 @@ class SimulationEngine:
             affected_areas=affected,
             interventions=interventions,
             simulated_metrics={
-                "projected_wait_time": "25m" if severity > 0.7 else "5m",
+                "readings_analyzed": len(readings),
+                "district_status": "MONITORED",
                 "risk_level": "HIGH" if severity > 0.7 else "LOW"
             }
         )
