@@ -18,29 +18,28 @@ spec:
               set -e
               
               echo "Waiting for Kafka to be ready"
-              sleep 20
               
               BOOTSTRAP="kafka:9092"
               
               create_topic() {
-                /opt/kafka/bin/kafka-topic.sh \
-                --bootstrap-server $BOOTSTRAP
+                /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server $BOOTSTRAP \
+                --topic $1 \
                 --create \
                 --if-not-exists \
-                --topic $1 \
                 --partitions $2 \
-                --replication-factor $2
+                --replication-factor $3
               }
               
-              create_topic traffic.sensors 32 3
-              create_topic transport.sensors 32 3
-              create_topic utilities.sensors 32 3
-              create_topic environment.sensors 32 3
-              create_topic telecom.sensors 32 3
-              create_topic green_infra.sensors 32 3
+              create_topic traffic.sensors 32 1
+              create_topic transport.sensors 32 1
+              create_topic utilities.sensors 32 1
+              create_topic environment.sensors 32 1
+              create_topic telecom.sensors 32 1
+              create_topic greeninfra.sensors 32 1
               
-              create_topic emergency.alerts 6 3
-              create_topic emergency.commands 6 3
-              create_topic system.health 6 3
+              create_topic emergency.alerts 6 1
+              create_topic emergency.commands 6 1
+              create_topic system.health 6 1
               
               echo "Kafka topics initialized."
