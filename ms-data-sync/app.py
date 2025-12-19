@@ -5,7 +5,7 @@ import app.repository as repository
 app = Flask(__name__)
 app.register_blueprint(sensors)
 pg_db = repository.PostGIS()
-influx_db = repository.InfluxDB()
+# influx_db = repository.InfluxDB()
 
 
 @app.route('/')
