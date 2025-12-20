@@ -1,6 +1,6 @@
 import uuid
 
-from ..repository.postgis_base import Base
+from ..repository.postgres_base import Base
 from geoalchemy2.shape import from_shape, to_shape
 from sqlalchemy import Column, DateTime, String, Float
 from sqlalchemy.dialects.postgresql import UUID

@@ -1,5 +1,5 @@
-from .postgis import PostGIS
-from .influx_db import InfluxDB
-from .postgis_base import Base
+from .postgres import PostGIS
+from .postgres_base import Base
+from .data_lake import DataLake
 
-__all__ = ['PostGIS', 'InfluxDB', 'Base']
+__all__ = ['PostGIS', 'Base']
