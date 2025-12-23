@@ -1,7 +1,10 @@
 from flask import Flask
+from app.controller import sensors
+import app.repository as repository
 
 app = Flask(__name__)
-
+app.register_blueprint(sensors)
+pg_db = repository.PostGIS()
 
 @app.route('/')
 def hello_world():

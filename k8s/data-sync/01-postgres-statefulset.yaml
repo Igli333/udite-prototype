@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgis
+  name: postgres
   namespace: data-sync
 spec:
   selector:
     matchLabels:
-      app: postgis
-  serviceName: postgis
+      app: postgres
+  serviceName: postgres
   replicas: 1
   template:
     metadata:
       labels:
-        app: postgis
+        app: postgres
     spec:
       containers:
-        - name: postgis
-          image: postgis/postgis:latest
+        - name: postgres
+          image: timescale/timescaledb-ha:pg16
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:

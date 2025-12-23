@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/ms-data-sync/schema/00_districts.sql" value="70b44313-7f1a-4488-b7cb-317560fda6d9" />
+    <file url="file://$PROJECT_DIR$/ms-data-sync/schema/01_sensor_data.sql" value="70b44313-7f1a-4488-b7cb-317560fda6d9" />
+  </component>
+</project>
