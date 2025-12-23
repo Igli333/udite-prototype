@@ -1,1 +1,1 @@
-# udite-prototype
+# Prototype for UDiTE
