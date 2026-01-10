@@ -1,9 +1,12 @@
 import uuid
 
+from district import District
 from ..repository.postgres_base import Base
+
+from sqlalchemy.orm import relationship
 from geoalchemy2.shape import from_shape, to_shape
 from sqlalchemy import Column, DateTime, String, Float
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSON
 from geoalchemy2 import Geometry
 from shapely.geometry import Point
 
@@ -16,7 +19,9 @@ class SensorData(Base):
     value = Column(Float, nullable=False)
     unit = Column(String, nullable=False)
     location = Column(Geometry('POINT', srid=4326, spatial_index=True), nullable=False)
-    district = Column(String, nullable=False)
+    meta_data = Column(JSON, nullable=False)
+    district = relationship("District", back_populates="district")
+    system = Column(String, nullable=False)
 
     def __init__(self, row):
         super().__init__()
@@ -32,8 +37,9 @@ class SensorData(Base):
             srid=4326,
             spatial_index=True
         )
+        self.meta_data = row['meta_data']
         self.system = row['system']
-        self.district = row['district']
+        self.district = District(row['district'])
 
     def get_point(self):
         return to_shape(self.location)

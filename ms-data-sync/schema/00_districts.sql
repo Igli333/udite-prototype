@@ -29,3 +29,20 @@ VALUES ('hel-01', 'Kruununhaka', ST_GeomFromText('MULTIPOLYGON EMPTY', 4326)),
        ('hel-12', 'Tattariharju', ST_GeomFromText('MULTIPOLYGON EMPTY', 4326)),
        ('hel-13', 'Vanhakaupunki', ST_GeomFromText('MULTIPOLYGON EMPTY', 4326))
 ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS public.systems
+(
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    description TEXT
+);
+
+INSERT INTO public.systems (id, name, description)
+VALUES ('traffic', 'Traffic System', ''),
+       ('utilities', 'Utilities System', ''),
+       ('emergency', 'Emergency resources System', ''),
+       ('telecom', 'Telecommunication Resources System', ''),
+       ('public_transport', 'Public Transport System', ''),
+       ('green_infrastructure', 'Green Infrastructure System', '')
+ON CONFLICT (id) DO NOTHING;
+

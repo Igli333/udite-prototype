@@ -1,12 +1,10 @@
 import threading
 
-from ..model import SensorData
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .postgres_base import Base
 
 
-class PostGIS:
+class Postgres:
     _instance = None
     _lock = threading.Lock()
 
@@ -20,5 +18,8 @@ class PostGIS:
 
     def _initialize(self):
         password = "password"
-        self.engine = create_engine(f"postgresql://postgres:{password}@localhost:5432/postgres")
+        self.engine = create_engine(
+            f"postgresql://postgres:{password}@localhost:5432/postgres",
+            pool_pre_ping=True
+        )
         self.session = sessionmaker(bind=self.engine)()
