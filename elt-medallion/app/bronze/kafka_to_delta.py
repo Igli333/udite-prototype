@@ -2,7 +2,7 @@ import os
 from pyspark.sql.functions import col, current_timestamp
 from app.common.spark_session import get_spark
 
-KAFKA_BOOTSTRAP = "kafka:9092"
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "kafka:9092")
 TOPICS = "traffic.sensors,transport.sensors,utilities.sensors,environment.sensors,telecom.sensors,greeninfra.sensors"
 
 BRONZE_PATH = "/opt/data/bronze/sensors_raw"

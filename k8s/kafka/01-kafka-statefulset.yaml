@@ -6,7 +6,7 @@ metadata:
   name: kafka
   namespace: kafka
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: kafka
@@ -31,7 +31,7 @@ spec:
             - name: KAFKA_INTER_BROKER_LISTENER_NAME
               value: "INTERNAL_PLAINTEXT"
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "INTERNAL_PLAINTEXT://kafka:9092,EXTERNAL_PLAINTEXT://localhost:9094"
+              value: "INTERNAL_PLAINTEXT://kafka.kafka.svc.cluster.local:9092,EXTERNAL_PLAINTEXT://localhost:9094"
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
               value: CONTROLLER
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS

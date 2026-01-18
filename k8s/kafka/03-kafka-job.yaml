@@ -19,7 +19,7 @@ spec:
               
               echo "Waiting for Kafka to be ready"
               
-              BOOTSTRAP="kafka:9092"
+              BOOTSTRAP="kafka.kafka.svc.cluster.local:9092"
               
               create_topic() {
                 /opt/kafka/bin/kafka-topics.sh \
@@ -29,21 +29,21 @@ spec:
                 --if-not-exists \
                 --partitions $2 \
                 --replication-factor $3
-                --config retention.ms=86400000
               }
               
-              create_topic traffic.sensors 32 3
-              create_topic transport.sensors 32 3
-              create_topic utilities.sensors 32 3
-              create_topic environment.sensors 32 3
-              create_topic telecom.sensors 32 3
-              create_topic greeninfra.sensors 32 3
+              create_topic traffic.sensors 32 1
+              create_topic transport.sensors 32 1
+              create_topic utilities.sensors 32 1
+              create_topic environment.sensors 32 1
+              create_topic telecom.sensors 32 1
+              create_topic greeninfra.sensors 32 1
               
               
-              create_topic emergency.alerts 6 3
-              create_topic emergency.commands 6 3
-              create_topic system.health 6 3
+              # create_topic emergency.alerts 6 1
+              # create_topic emergency.commands 6 1
+              # create_topic system.health 6 1
               
-              create_topic processed.data 12 3
-              create_topic event.classifier 6 3
+              create_topic processed.data 12 1
+              create_topic event.classifier 6 1
+              
               echo "Kafka topics initialized."

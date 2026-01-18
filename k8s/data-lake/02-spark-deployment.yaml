@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark
+  namespace: data-lake
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+  template:
+    metadata:
+      labels:
+        app: spark
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: spark
+          image: udite/spark:latest
+          imagePullPolicy: Never
+          command: ["sh", "-lc", "tail -f /dev/null"]
+          ports:
+            - containerPort: 4040
+              name: spark-ui
+          env:
+            - name: PYTHONPATH
+              value: /opt
+            - name: HADOOP_USER_NAME
+              value: sparkuser
+            - name: SPARK_USER
+              value: sparkuser
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Duser.name=sparkuser"
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: spark-storage
+              mountPath: /opt/data
+              subPath: data
+            - name: spark-storage
+              mountPath: /opt/warehouse
+              subPath: warehouse
+            - name: spark-storage
+              mountPath: /opt/checkpoints
+              subPath: checkpoints
+            - name: spark-storage
+              mountPath: /opt/ivy
+              subPath: ivy
+            - name: spark-storage
+              mountPath: /opt/app
+              subPath: app
+      volumes:
+        - name: spark-storage
+          persistentVolumeClaim:
+            claimName: spark-pvc
