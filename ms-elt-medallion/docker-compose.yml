@@ -1,0 +1,93 @@
+name: elt-medallion
+
+services:
+  kafka:
+    image: apache/kafka:4.1.1
+    container_name: kafka
+    environment:
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "9092:9092"
+    networks:
+      - medallion
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    ports:
+      - "8080:8080"
+    networks:
+      - medallion
+
+  spark:
+    build:
+      context: .
+      dockerfile: docker/spark/Dockerfile
+    container_name: spark
+    user: "1000:1000"
+    command: ["bash","-lc","tail -f /dev/null"]
+    depends_on:
+      kafka:
+        condition: service_started
+    environment:
+      - PYTHONPATH=/opt
+      - HADOOP_USER_NAME=sparkuser
+      - SPARK_USER=sparkuser
+      - JAVA_TOOL_OPTIONS=-Duser.name=sparkuser
+      - CITY_CONFIG=/opt/config/city_sensors.yml         
+    volumes:
+      - ./app:/opt/app
+      - ./data:/opt/data
+      - ./warehouse:/opt/warehouse
+      - ./checkpoints:/opt/checkpoints
+      - ./config/city_sensors.yml:/opt/config/city_sensors.yml:ro 
+      - ivy_cache:/opt/ivy
+    ports:
+      - "4040:4040"
+    networks:
+      - medallion
+
+  producer:
+    build:
+      context: .
+      dockerfile: docker/producer/Dockerfile
+    container_name: producer
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - HEARTBEAT_SECONDS=5
+      - CITY_CONFIG=/opt/config/city_sensors.yml          
+    depends_on:
+      kafka:
+        condition: service_started
+    volumes:
+      - ./config/city_sensors.yml:/opt/config/city_sensors.yml:ro  
+    networks:
+      - medallion
+    restart: unless-stopped
+
+networks:
+  medallion:
+    name: medallion
+
+volumes:
+  pg_data:
+    name: local-medallion_pg_data
+  ivy_cache:
+    name: local-medallion_ivy_cache

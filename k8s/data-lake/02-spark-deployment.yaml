@@ -54,6 +54,9 @@ spec:
               mountPath: /opt/checkpoints
               subPath: checkpoints
             - name: spark-storage
+              mountPath: /opt/config
+              subPath: config
+            - name: spark-storage
               mountPath: /opt/ivy
               subPath: ivy
             - name: spark-storage
