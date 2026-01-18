@@ -11,9 +11,4 @@ class District(Base):
     name = Column(String)
     geom = Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), nullable=False)
 
-    er_data = relationship("EmergencyResourcesData", back_populates="district")
-    green_data = relationship("GreenInfrastructureData", back_populates="district")
-    telecom_data = relationship("TelecommunicationsInfrastructureData", back_populates="district")
-    traffic_data = relationship("TrafficData", back_populates="district")
-    transport_data = relationship("PublicTransportData", back_populates="district")
-    utility_data = relationship("UtilitiesData", back_populates="district")
+    sensor_data = relationship("SensorData", back_populates="sensor_data")

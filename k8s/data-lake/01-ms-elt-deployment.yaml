@@ -19,3 +19,8 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 5002
+          env:
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092
+            - name: HEARTBEAT_SECONDS
+              value: "5"

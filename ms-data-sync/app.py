@@ -1,10 +1,12 @@
 from flask import Flask
-from app.controller import sensors
-import app.repository as repository
+from app.controller import sensors, simulator, event_classifier
 
 app = Flask(__name__)
+
 app.register_blueprint(sensors)
-pg_db = repository.PostGIS()
+app.register_blueprint(simulator)
+app.register_blueprint(event_classifier)
+
 
 @app.route('/')
 def hello_world():

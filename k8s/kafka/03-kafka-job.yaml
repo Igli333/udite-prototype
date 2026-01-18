@@ -19,7 +19,7 @@ spec:
               
               echo "Waiting for Kafka to be ready"
               
-              BOOTSTRAP="kafka:9092"
+              BOOTSTRAP="kafka.kafka.svc.cluster.local:9092"
               
               create_topic() {
                 /opt/kafka/bin/kafka-topics.sh \
@@ -38,8 +38,12 @@ spec:
               create_topic telecom.sensors 32 1
               create_topic greeninfra.sensors 32 1
               
-              create_topic emergency.alerts 6 1
-              create_topic emergency.commands 6 1
-              create_topic system.health 6 1
+              
+              # create_topic emergency.alerts 6 1
+              # create_topic emergency.commands 6 1
+              # create_topic system.health 6 1
+              
+              create_topic processed.data 12 1
+              create_topic event.classifier 6 1
               
               echo "Kafka topics initialized."

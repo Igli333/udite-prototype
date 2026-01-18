@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gold-silver-to-kafka
+  namespace: data-lake
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: spark-gold
+          image: udite/spark:latest
+          imagePullPolicy: Never
+          command:
+            - /opt/spark/bin/spark-submit
+          args:
+            - --conf
+            - spark.jars.ivy=/opt/ivy
+            - --packages
+            - io.delta:delta-spark_2.12:3.2.0,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+            - /opt/app/gold/silver_to_kafka.py
+          env:
+            - name: PYTHONPATH
+              value: /opt
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092
+          volumeMounts:
+            - name: spark-storage
+              mountPath: /opt/data
+              subPath: data
+            - name: spark-storage
+              mountPath: /opt/ivy
+              subPath: ivy
+      volumes:
+        - name: spark-storage
+          persistentVolumeClaim:
+            claimName: spark-pvc

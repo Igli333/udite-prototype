@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: silver-bronze-to-silver
+  namespace: data-lake
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: spark-silver
+          image: udite/spark:latest
+          imagePullPolicy: Never
+          command:
+            - /opt/spark/bin/spark-submit
+          args:
+            - --conf
+            - spark.jars.ivy=/opt/ivy
+            - --packages
+            - io.delta:delta-spark_2.12:3.2.0
+            - /opt/app/silver/bronze_to_silver.py
+          env:
+            - name: PYTHONPATH
+              value: /opt
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092
+          volumeMounts:
+            - name: spark-storage
+              mountPath: /opt/data
+              subPath: data
+            - name: spark-storage
+              mountPath: /opt/ivy
+              subPath: ivy
+      volumes:
+        - name: spark-storage
+          persistentVolumeClaim:
+            claimName: spark-pvc
