@@ -2,12 +2,13 @@ import os
 import json
 import random
 import time
+import yaml
 from datetime import datetime, timezone, timedelta
 
 from kafka import KafkaProducer
-from app.common.config_loader import load_config
+from common.config_loader import load_config
 
-CONFIG_PATH = os.getenv("CITY_CONFIG", "/opt/config/city_sensors.yml")
+CONFIG_PATH = os.getenv("CITY_CONFIG", "/config/city_sensors.yml")
 CONFIG = load_config(CONFIG_PATH)
 
 with open(CONFIG_PATH, "r") as f:
