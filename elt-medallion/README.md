@@ -147,7 +147,22 @@ All sensor events follow this JSON structure:
 
 ## Gold Layer Output Schema
 
-Aggregated messages published to `processed.data` topic:
+Cleaned and transformed data retrieved from silver publichsed to `processed.data` topic:
+
+```json
+{
+  "sensor_id": "traffic-42",
+  "sensor_timestamp": "2026-01-15T10:30:45.123456+00:00",
+  "value": 65.4321,
+  "unit": "km/h",
+  "longitude": 23.726543,
+  "latitude": 37.984321,
+  "district": "3",
+  "topic": "traffic.sensors"
+}
+```
+
+Aggregated messages published to `business.data` topic:
 
 ```json
 {
