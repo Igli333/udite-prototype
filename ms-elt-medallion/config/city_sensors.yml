@@ -1,0 +1,82 @@
+city:
+  name: helsinki
+  lat_range: [60.14, 60.30]
+  lon_range: [24.80, 25.25]
+
+districts:
+  hel-01: { name: Kruununhaka,   lat_range: [60.168, 60.177], lon_range: [24.948, 24.963] }
+  hel-02: { name: Kluuvi,        lat_range: [60.168, 60.174], lon_range: [24.936, 24.951] }
+  hel-03: { name: Kamppi,        lat_range: [60.163, 60.175], lon_range: [24.921, 24.941] }
+  hel-04: { name: Punavuori,     lat_range: [60.156, 60.166], lon_range: [24.921, 24.942] }
+  hel-05: { name: Eira,          lat_range: [60.152, 60.159], lon_range: [24.930, 24.948] }
+  hel-06: { name: Kaivopuisto,   lat_range: [60.149, 60.155], lon_range: [24.949, 24.968] }
+
+  hel-07: { name: Kallio,        lat_range: [60.178, 60.191], lon_range: [24.945, 24.970] }
+  hel-08: { name: Vallila,       lat_range: [60.188, 60.197], lon_range: [24.944, 24.966] }
+  hel-09: { name: Hermanni,      lat_range: [60.188, 60.198], lon_range: [24.966, 24.990] }
+  hel-10: { name: Pasila,        lat_range: [60.197, 60.214], lon_range: [24.924, 24.957] }
+  hel-11: { name: Alppila,       lat_range: [60.186, 60.194], lon_range: [24.925, 24.944] }
+
+  hel-12: { name: Kumpula,       lat_range: [60.204, 60.215], lon_range: [24.945, 24.970] }
+  hel-13: { name: Oulunkylä,     lat_range: [60.225, 60.238], lon_range: [24.950, 24.980] }
+  hel-14: { name: Maunula,       lat_range: [60.232, 60.247], lon_range: [24.910, 24.940] }
+  hel-15: { name: Pakila,        lat_range: [60.245, 60.265], lon_range: [24.930, 24.975] }
+
+  hel-16: { name: Lauttasaari,   lat_range: [60.147, 60.169], lon_range: [24.856, 24.882] }
+  hel-17: { name: Munkkiniemi,   lat_range: [60.186, 60.201], lon_range: [24.870, 24.890] }
+  hel-18: { name: Munkkivuori,   lat_range: [60.193, 60.204], lon_range: [24.860, 24.880] }
+  hel-19: { name: Haaga,         lat_range: [60.215, 60.235], lon_range: [24.880, 24.910] }
+  hel-20: { name: Pitäjänmäki,   lat_range: [60.215, 60.235], lon_range: [24.850, 24.880] }
+
+  hel-21: { name: Arabianranta,  lat_range: [60.203, 60.215], lon_range: [24.975, 25.005] }
+  hel-22: { name: Vanhakaupunki, lat_range: [60.206, 60.219], lon_range: [24.980, 25.015] }
+  hel-23: { name: Herttoniemi,   lat_range: [60.186, 60.203], lon_range: [25.020, 25.055] }
+  hel-24: { name: Roihuvuori,    lat_range: [60.191, 60.205], lon_range: [25.055, 25.085] }
+  hel-25: { name: Itäkeskus,     lat_range: [60.209, 60.222], lon_range: [25.055, 25.090] }
+  hel-26: { name: Myllypuro,     lat_range: [60.219, 60.233], lon_range: [25.070, 25.105] }
+  hel-27: { name: Kontula,       lat_range: [60.232, 60.247], lon_range: [25.085, 25.120] }
+  hel-28: { name: Vuosaari,      lat_range: [60.199, 60.226], lon_range: [25.115, 25.165] }
+
+  hel-29: { name: Tattariharju,  lat_range: [60.221, 60.232], lon_range: [24.995, 25.025] }
+  hel-30: { name: Malmi,         lat_range: [60.244, 60.265], lon_range: [25.000, 25.040] }
+  hel-31: { name: Pukinmäki,     lat_range: [60.240, 60.255], lon_range: [24.980, 25.010] }
+  hel-32: { name: Tapanila,      lat_range: [60.258, 60.275], lon_range: [24.990, 25.030] }
+  hel-33: { name: Suutarila,     lat_range: [60.275, 60.295], lon_range: [24.990, 25.040] }
+  hel-34: { name: Jakomäki,      lat_range: [60.260, 60.285], lon_range: [25.065, 25.105] }
+
+topics:
+  traffic.sensors:
+    unit: km/h
+    min_value: 0
+    max_value: 150
+  transport.sensors:
+    unit: passengers
+    min_value: 0
+    max_value: 2000
+  utilities.sensors:
+    unit: kWh
+    min_value: 0
+    max_value: 100000
+  environment.sensors:
+    unit: ppm
+    min_value: 0
+    max_value: 5000
+  telecom.sensors:
+    unit: dBm
+    min_value: -150
+    max_value: 50
+  greeninfra.sensors:
+    unit: liters
+    min_value: 0
+    max_value: 100000
+
+sensors:
+  per_district_per_topic: 5
+
+time_rules:
+  max_future_minutes: 5
+  max_past_days: 365
+
+messy_data:
+  enabled: true
+  corruption_probability: 0.5
