@@ -18,7 +18,7 @@ Create the required Kafka topics for all sensor domains and the output topic:
 
 ```bash
 docker exec -it kafka bash -lc '
-for t in traffic.sensors transport.sensors utilities.sensors environment.sensors telecom.sensors greeninfra.sensors processed.data; do
+for t in traffic.sensors transport.sensors utilities.sensors environment.sensors telecom.sensors greeninfra.sensors processed.data business.data; do
   /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists \
     --topic "$t" --partitions 1 --replication-factor 1
 done
