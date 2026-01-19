@@ -19,7 +19,3 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 5001
-      volumes:
-        - name: event-classifier-volume
-          persistentVolumeClaim:
-            claimName: event-classifier-claim
