@@ -3,7 +3,7 @@ def classify_event(data):
 
     # 1) Traffic
     if category == "traffic":
-        vehicle_flow = data.get("vehicle_flow", 0)      # vehicles per minute
+        vehicle_flow = data.get("vehicle_flow", 0)  # vehicles per minute
         road_occupancy = data.get("road_occupancy", 0)  # 0–1
 
         if road_occupancy > 0.9 and vehicle_flow < 5:
@@ -129,35 +129,3 @@ def classify_event(data):
             return {"event_type": "TELECOM_NORMAL", "severity": "NONE"}
 
     return {"event_type": "UNKNOWN", "severity": "NONE"}
-
-
-import numpy as np
-
-
-def compute_trends(window):
-    """
-    Simple trend computation: avg, min, max, linear slope
-    """
-    if not window:
-        return {}
-
-    values = np.array([d["value"] for d in window])
-    times = np.array([datetime.fromisoformat(d["timestamp"]).timestamp() for d in window])
-
-    # Basic trend metrics
-    avg_val = float(np.mean(values))
-    min_val = float(np.min(values))
-    max_val = float(np.max(values))
-
-    # Linear trend (slope) over time
-    if len(values) >= 2:
-        slope = float(np.polyfit(times - times[0], values, 1)[0])
-    else:
-        slope = 0.0
-
-    return {
-        "avg": avg_val,
-        "min": min_val,
-        "max": max_val,
-        "slope": slope
-    }

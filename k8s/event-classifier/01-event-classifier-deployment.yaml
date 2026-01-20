@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: ms-event-classifier
-  replicas: 1 # To be updated
+  replicas: 1
   template:
     metadata:
       labels:
@@ -19,3 +19,8 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 5001
+          env:
+            - name: SIMULATOR_URL
+              value: ms-simulator.simulator.svc.cluster.local:5000
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092

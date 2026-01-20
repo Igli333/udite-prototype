@@ -19,6 +19,7 @@ def map_sensor_to_category(sensor_id, unit):
     else:
         return "unknown"
 
+
 def compute_trends_category(window, category):
     """
     Compute trends used in the original classifier for your categories
@@ -52,7 +53,7 @@ def compute_trends_category(window, category):
         metrics["max_value"] = max(d["value"] for d in window)
 
     elif category == "utilities":
-        # For utilities we could count events
+        # For utilities we count events
         metrics["outage_count"] = sum(1 for d in window if d["value"] > 0)  # placeholder
 
     elif category == "green_infrastructure":
@@ -64,6 +65,7 @@ def compute_trends_category(window, category):
         metrics["down_count"] = sum(1 for d in window if d["value"] == 0)  # 0 = down
 
     return metrics
+
 
 def classify_event_streaming(sensor_id, category, trend_metrics):
     """

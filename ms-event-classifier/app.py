@@ -1,10 +1,10 @@
 import os
-import numpy as np
 import json
 import time
 import requests
 import redis
 import threading
+import numpy as np
 
 from flask import Flask, jsonify
 from datetime import datetime
@@ -78,9 +78,8 @@ SIMULATOR_URL = os.getenv("SIMULATOR_URL")
 
 
 def push_to_simulator(event):
-    # For now, just print
     print(f"Pushing event to simulator: {event}")
-    requests.post(SIMULATOR_URL, json=event)  # Uncomment for real push
+    requests.post(SIMULATOR_URL, json=event)
 
 
 def process_message(msg):
