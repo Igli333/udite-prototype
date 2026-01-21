@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from .. import service, repository, model
 
 sensors = Blueprint('sensor_data', __name__)
-sync_service = service.DataSyncService()
+# sync_service = service.DataSyncService()
 
 database = repository.Postgres()
 SessionLocal = sessionmaker(bind=database.engine)
@@ -48,5 +48,5 @@ threading.Thread(target=read_data, daemon=True).start()
 def sync_to_data_lake():
     data = request.json
 
-    sync_service.sync_to_data_lake(data)
+    # sync_service.sync_to_data_lake(data)
     return jsonify({"success": True})

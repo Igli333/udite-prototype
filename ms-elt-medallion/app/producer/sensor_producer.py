@@ -8,14 +8,15 @@ from datetime import datetime, timezone, timedelta
 from kafka import KafkaProducer
 from common.config_loader import load_config
 
+# Load config
 CONFIG_PATH = os.getenv("CITY_CONFIG", "/config/city_sensors.yml")
 CONFIG = load_config(CONFIG_PATH)
 
 with open(CONFIG_PATH, "r") as f:
     CONFIG = yaml.safe_load(f)
 
-DISTRICTS = CONFIG["districts"]  # dict: hel-01 -> {name, lat_range, lon_range}
-TOPICS_CFG = CONFIG["topics"]    # dict: topic -> {unit, min_value, max_value}
+DISTRICTS = CONFIG["districts"]
+TOPICS_CFG = CONFIG["topics"]
 CITY_CFG = CONFIG.get("city", {})
 
 SENSORS_PER_DISTRICT_PER_TOPIC = int(CONFIG["sensors"]["per_district_per_topic"])
@@ -24,10 +25,7 @@ MESSY_CFG = CONFIG.get("messy_data", {})
 MESSY_ENABLED = bool(MESSY_CFG.get("enabled", True))
 CORRUPTION_PROB = float(MESSY_CFG.get("corruption_probability", 0.5))
 
-
 KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "kafka:9092")
-HEARTBEAT_SECONDS = int(os.getenv("HEARTBEAT_SECONDS", "5"))
-
 TOPICS = {topic: cfg["unit"] for topic, cfg in TOPICS_CFG.items()}
 
 producer = KafkaProducer(
@@ -37,6 +35,11 @@ producer = KafkaProducer(
     acks="all",
     linger_ms=50,
 )
+
+# Target load
+TARGET_EPS = 1700  # events per second (>100k/min)
+BATCH_SIZE = 100  # events per batch
+SLEEP_TIME = BATCH_SIZE / TARGET_EPS  # interval between batches
 
 
 def utc_now_iso() -> str:
@@ -61,25 +64,21 @@ def build_sensor_registry():
         district_name = d["name"]
         lat_range = tuple(d["lat_range"])
         lon_range = tuple(d["lon_range"])
-
         for topic, tcfg in TOPICS_CFG.items():
             unit = tcfg["unit"]
             base = topic.split(".")[0]
-
             for i in range(1, SENSORS_PER_DISTRICT_PER_TOPIC + 1):
                 lat, lon = random_point_in_box(lat_range, lon_range)
                 sensor_id = f"{base}-{district_id}-{i:02d}"
-                sensors.append(
-                    {
-                        "sensor_id": sensor_id,
-                        "topic": topic,
-                        "unit": unit,
-                        "district_id": district_id,
-                        "district_name": district_name,
-                        "latitude": lat,
-                        "longitude": lon,
-                    }
-                )
+                sensors.append({
+                    "sensor_id": sensor_id,
+                    "topic": topic,
+                    "unit": unit,
+                    "district_id": district_id,
+                    "district_name": district_name,
+                    "latitude": lat,
+                    "longitude": lon,
+                })
     return sensors
 
 
@@ -114,7 +113,7 @@ def maybe_corrupt_record(record: dict):
         return [record]
 
     if random.random() > CORRUPTION_PROB:
-        return [record]  
+        return [record]
 
     r = random.random()
     records_to_send = [record]
@@ -171,28 +170,32 @@ def maybe_corrupt_record(record: dict):
 
 def main():
     print(f"Producer connecting to {KAFKA_BOOTSTRAP}")
-    print(f"Config: {CONFIG_PATH}")
-    print(f"Districts: {len(DISTRICTS)} | Topics: {len(TOPICS_CFG)}")
-    print(f"Sensors per district per topic: {SENSORS_PER_DISTRICT_PER_TOPIC}")
-    print(f"Total sensors in registry: {len(SENSORS)}")
-    print(f"Messy enabled: {MESSY_ENABLED} | corruption_probability: {CORRUPTION_PROB}")
+    print(f"Total sensors: {len(SENSORS)} | Messy enabled: {MESSY_ENABLED}")
+    sent_count = 0
+    start_time = time.time()
 
     while True:
-        # send from a random subset each heartbeat
-        batch_size = random.randint(10, min(50, len(SENSORS)))
-        sensors_this_batch = random.sample(SENSORS, k=batch_size)
+        sensors_this_batch = random.choices(SENSORS, k=BATCH_SIZE)
+        batch_events = 0
 
         for sensor in sensors_this_batch:
             clean = make_clean_sensor_record(sensor)
             for rec in maybe_corrupt_record(clean):
                 key = rec.get("sensor_id", "null")
-                
                 kafka_topic = rec.get("topic") or sensor["topic"]
                 producer.send(kafka_topic, key=key, value=rec)
+                batch_events += 1
 
         producer.flush()
-        print(f"[{utc_now_iso()}] sent batch (~{batch_size} sensors)")
-        time.sleep(HEARTBEAT_SECONDS)
+        sent_count += batch_events
+
+        elapsed = time.time() - start_time
+        if elapsed >= 5:  # every 5 sec, print EPS
+            print(f"[{utc_now_iso()}] EPS: {sent_count / elapsed:.0f}")
+            sent_count = 0
+            start_time = time.time()
+
+        time.sleep(SLEEP_TIME)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,6 @@ from flask import Blueprint, request, jsonify
 from .. import service
 
 simulator = Blueprint('simulator', __name__)
-sync_service = service.DataSyncService()
 
 
 @simulator.route('/simulator/stream', methods=['GET'])

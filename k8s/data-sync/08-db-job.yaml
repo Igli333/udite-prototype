@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-job
+  namespace: data-sync
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: init-db
+          image: timescale/timescaledb-ha:pg16
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: data-sync-secrets
+                  key: postgres_password
+          command: [ "psql" ]
+          args:
+            - "-h"
+            - "postgres"
+            - "-U"
+            - "postgres"
+            - "-d"
+            - "password"
+            - "-f"
+            - "/sql/init-schema.sql"
+          volumeMounts:
+            - name: sql-files
+              mountPath: /sql
+      volumes:
+        - name: sql-files
+          configMap:
+            name: db-init-sql
