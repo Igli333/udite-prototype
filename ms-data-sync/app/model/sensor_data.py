@@ -26,7 +26,7 @@ class SensorData(Base):
     def __init__(self, row):
         super().__init__()
         self.sensor_id = row['sensor_id']
-        self.timestamp = row['timestamp']
+        self.timestamp = row['sensor_timestamp']
         self.value = float(row['value'])
         self.unit = row['unit']
         self.location = from_shape(
@@ -39,7 +39,7 @@ class SensorData(Base):
         )
         self.meta_data = row['meta_data']
         self.system = row['system']
-        self.district = District(row['district'])
+        self.district = District(row['district_id'])
 
     def get_point(self):
         return to_shape(self.location)

@@ -15,8 +15,10 @@ spec:
       containers:
         - name: redis
           image: redis:latest
-          command: [ "redis-server", "/data/redis.conf" ]
-          args: [ "--appendonly", "yes" ]
+          command: [ "redis-server" ]
+          args:
+            - "--appendonly"
+            - "yes"
           ports:
             - containerPort: 6379
           volumeMounts:

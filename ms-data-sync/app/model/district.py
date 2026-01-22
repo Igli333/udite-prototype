@@ -9,6 +9,6 @@ class District(Base):
     __tablename__ = 'district'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    geom = Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), nullable=False)
+    geom = Column(Geometry(geometry_type='POLYGON', srid=4326), nullable=False)
 
     sensor_data = relationship("SensorData", back_populates="sensor_data")
