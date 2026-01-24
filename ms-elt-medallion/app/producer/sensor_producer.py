@@ -37,8 +37,8 @@ producer = KafkaProducer(
 )
 
 # Target load
-TARGET_EPS = 1700  # events per second (>100k/min)
-BATCH_SIZE = 100  # events per batch
+TARGET_EPS = int(os.getenv("TARGET_EPS"))  # events per second (>100k/min)
+BATCH_SIZE = int(os.getenv("BATCH_SIZE"))  # events per batch
 SLEEP_TIME = BATCH_SIZE / TARGET_EPS  # interval between batches
 
 

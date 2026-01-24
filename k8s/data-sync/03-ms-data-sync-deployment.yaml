@@ -19,3 +19,13 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 5002
+          env:
+            - name: KAFKA_BOOTSTRAP
+              value: kafka.kafka.svc.cluster.local:9092
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: data-sync-secrets
+                  key: postgres_password
+            - name: POSTGRES_HOST
+              value: postgres.data-sync.svc.cluster.local:5432

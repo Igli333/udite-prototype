@@ -1,11 +1,10 @@
 from flask import Flask
-from app.controller import sensors, simulator, event_classifier
+from app.controller import sensors, simulator
 
 app = Flask(__name__)
 
 app.register_blueprint(sensors)
 app.register_blueprint(simulator)
-app.register_blueprint(event_classifier)
 
 
 @app.route('/')

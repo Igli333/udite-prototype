@@ -1,3 +1,4 @@
+import os
 import threading
 
 from sqlalchemy import create_engine
@@ -17,9 +18,10 @@ class Postgres:
         return cls._instance
 
     def _initialize(self):
-        password = "password"
+        password = os.getenv('POSTGRES_PASSWORD')
+        host = os.getenv('POSTGRES_HOST')
         self.engine = create_engine(
-            f"postgresql://postgres:{password}@localhost:5432/postgres",
+            f"postgresql://postgres:{password}@{host}/postgres",
             pool_pre_ping=True
         )
         self.session = sessionmaker(bind=self.engine)()

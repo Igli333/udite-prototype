@@ -11,11 +11,11 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from kafka import KafkaConsumer
 
-from .app import map_sensor_to_category, compute_trends_category, classify_event_streaming
+from app import map_sensor_to_category, compute_trends_category, classify_event_streaming
 
 app = Flask(__name__)
 
-r = redis.Redis(host="redis", port=6379, db=0)
+r = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=0)
 WINDOW_SECONDS = 10 * 60  # 10-minute sliding window
 
 
@@ -115,7 +115,7 @@ def process_message(msg):
 
 def kafka_consumer_thread():
     consumer = KafkaConsumer(
-        bootstrap_servers=['kafka:9092'],
+        bootstrap_servers=[os.getenv("KAFKA_BOOTSTRAP")],
         auto_offset_reset='latest',
         group_id='sensor_data',
         value_deserializer=lambda m: json.loads(m.decode('utf-8'))

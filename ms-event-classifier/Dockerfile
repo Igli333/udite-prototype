@@ -2,7 +2,7 @@ FROM python:3.13.10-alpine
 
 WORKDIR .
 
-COPY /app .
+COPY /app /app
 COPY app.py /app.py
 
 COPY requirements.txt requirements.txt

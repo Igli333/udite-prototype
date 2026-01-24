@@ -21,6 +21,8 @@ spec:
             - containerPort: 5001
           env:
             - name: SIMULATOR_URL
-              value: ms-simulator.simulator.svc.cluster.local:5000
+              value: ms-simulator.simulator.svc.cluster.local:8000
             - name: KAFKA_BOOTSTRAP
               value: kafka.kafka.svc.cluster.local:9092
+            - name: REDIS_HOST
+              value: redis.event-classifier.svc.cluster.local:6379

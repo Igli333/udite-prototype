@@ -1,6 +1,6 @@
 import uuid
 
-from district import District
+from .district import District
 from ..repository.postgres_base import Base
 
 from sqlalchemy.orm import relationship

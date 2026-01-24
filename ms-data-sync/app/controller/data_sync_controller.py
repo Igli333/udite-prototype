@@ -1,44 +1,66 @@
+import os
 import json
 import threading
 
 from flask import Blueprint, request, jsonify
-from kafka import KafkaConsumer, KafkaProducer
+from confluent_kafka import Consumer, Producer
 from sqlalchemy.orm import sessionmaker
 
-from .. import service, repository, model
+from .. import repository, model
 
-sensors = Blueprint('sensor_data', __name__)
-# sync_service = service.DataSyncService()
+KAFKA_BOOTSTRAP = os.environ.get('KAFKA_BOOTSTRAP')
+
+sensors = Blueprint('sensor_data', __name__)\
 
 database = repository.Postgres()
 SessionLocal = sessionmaker(bind=database.engine)
 
-producer = KafkaProducer(
-    bootstrap_servers='kafka:9092',
-    key_serializer=lambda k: k.encode("utf-8"),
-    value_serializer=lambda v: json.dumps(v).encode("utf-8"),
-    acks="all"
-)
+# producer = KafkaProducer(
+#     bootstrap_servers=KAFKA_BOOTSTRAP,
+#     key_serializer=lambda k: k.encode("utf-8"),
+#     value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+#     acks="all"
+# )
+
+producer = Producer({
+    'bootstrap.servers': KAFKA_BOOTSTRAP,
+    "acks": "all"
+})
 
 
 def read_data():
-    consumer = KafkaConsumer(
-        bootstrap_servers=['kafka:9092'],
-        auto_offset_reset='latest',
-        group_id='sensor_data',
-        value_deserializer=lambda m: json.loads(m.decode('utf-8'))
-    )
+    consumer = Consumer({
+        "bootstrap.servers": KAFKA_BOOTSTRAP,
+        "group.id": "sensor_data",
+        "auto.offset.reset": "latest"
+    })
 
-    consumer.subscribe(topics=['processed.data'])
+    consumer.subscribe(['processed.data'])
     session = SessionLocal()
 
-    for message in consumer:
-        latest_data = message.value  # update latest
+    while True:
+        message = consumer.poll(timeout=1.0)
+
+        latest_data = json.loads(message.value().decode("utf-8"))
         data = model.SensorData(latest_data)
+
+        if message is None:
+            continue
+
+        if message.error():
+            print(f"Consumer error: {message.error()}")
+            continue
+
         session.add(data)
         session.commit()
 
-        producer.send('event.classifier', latest_data)
+        producer.produce(
+            'event.classifier',
+            key=data.sensor_id,
+            value=json.dumps(data).encode("utf-8")
+        )
+
+        producer.poll(0)
 
 
 threading.Thread(target=read_data, daemon=True).start()

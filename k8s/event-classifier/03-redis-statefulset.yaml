@@ -24,7 +24,6 @@ spec:
           volumeMounts:
             - name: redis-data
               mountPath: /data
-
   volumeClaimTemplates:
     - metadata:
         name: redis-data

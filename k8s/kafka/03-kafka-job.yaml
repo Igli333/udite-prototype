@@ -43,7 +43,7 @@ spec:
               # create_topic emergency.commands 6 1
               # create_topic system.health 6 1
               
-              create_topic processed.data 12 1
-              create_topic event.classifier 6 1
+              create_topic processed.data 1 1
+              create_topic event.classifier 1 1
               
               echo "Kafka topics initialized."
