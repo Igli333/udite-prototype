@@ -6,7 +6,7 @@ metadata:
   name: kafka
   namespace: kafka
 spec:
-  replicas: 1
+  replicas: 1 # replace with 3
   selector:
     matchLabels:
       app: kafka
@@ -21,6 +21,11 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9092
+              name: plaintext
+            - containerPort: 9093
+              name: controller
+            - containerPort: 9094
+              name: external
           env:
             - name: KAFKA_NODE_ID
               value: "1"

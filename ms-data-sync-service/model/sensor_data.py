@@ -1,7 +1,7 @@
 import uuid
 
 from .district import District
-from ..repository.postgres_base import Base
+from repository import Base
 
 from sqlalchemy.orm import relationship
 from geoalchemy2.shape import from_shape, to_shape
@@ -34,8 +34,7 @@ class SensorData(Base):
                 float(row["longitude"]),
                 float(row["latitude"])
             ),
-            srid=4326,
-            spatial_index=True
+            srid=4326
         )
         self.meta_data = row['meta_data']
         self.system = row['system']

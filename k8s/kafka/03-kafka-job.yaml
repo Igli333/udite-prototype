@@ -31,19 +31,27 @@ spec:
                 --replication-factor $3
               }
               
-              create_topic traffic.sensors 32 1
-              create_topic transport.sensors 32 1
-              create_topic utilities.sensors 32 1
-              create_topic environment.sensors 32 1
-              create_topic telecom.sensors 32 1
-              create_topic greeninfra.sensors 32 1
+              create_topic traffic.sensors 12 1
+              create_topic transport.sensors 12 1
+              create_topic utilities.sensors 12 1
+              create_topic environment.sensors 12 1
+              create_topic telecom.sensors 12 1
+              create_topic greeninfra.sensors 12 1
               
               
               # create_topic emergency.alerts 6 1
               # create_topic emergency.commands 6 1
               # create_topic system.health 6 1
               
-              create_topic processed.data 1 1
-              create_topic event.classifier 1 1
+              create_topic processed.data 6 1
+              create_topic event.classifier 6 1
+              
+              /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server localhost:9092 \
+                --create \
+                --topic __consumer_offsets \
+                --partitions 50 \
+                --replication-factor 1 \
+                --config cleanup.policy=compact
               
               echo "Kafka topics initialized."
