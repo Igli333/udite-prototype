@@ -22,5 +22,7 @@ spec:
           env:
             - name: KAFKA_BOOTSTRAP
               value: kafka.kafka.svc.cluster.local:9092
-            - name: HEARTBEAT_SECONDS
+            - name: TARGET_EPS
+              value: "10"
+            - name: BATCH_SIZE
               value: "5"

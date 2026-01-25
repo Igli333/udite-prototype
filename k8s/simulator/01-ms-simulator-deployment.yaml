@@ -18,4 +18,4 @@ spec:
           image: udite/ms-simulator:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 5000
+            - containerPort: 8000

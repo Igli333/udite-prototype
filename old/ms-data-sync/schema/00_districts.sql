@@ -1,0 +1,67 @@
+CREATE
+EXTENSION IF NOT EXISTS postgis;
+CREATE
+EXTENSION IF NOT EXISTS timescaledb;
+
+CREATE TABLE IF NOT EXISTS public.districts (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    geom geometry(Polygon ,4326) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS districts_geom_idx
+    ON public.districts USING GIST (geom);
+
+
+INSERT INTO public.districts (id, name, geom)
+VALUES ('hel-01', 'Kruununhaka', ST_MakeEnvelope(24.948, 60.168, 24.963, 60.177, 4326)),
+       ('hel-02', 'Kluuvi', ST_MakeEnvelope(24.936, 60.168, 24.951, 60.174, 4326)),
+       ('hel-03', 'Kamppi', ST_MakeEnvelope(24.921, 60.163, 24.941, 60.175, 4326)),
+       ('hel-04', 'Punavuori', ST_MakeEnvelope(24.921, 60.156, 24.942, 60.166, 4326)),
+       ('hel-05', 'Eira', ST_MakeEnvelope(24.930, 60.152, 24.948, 60.159, 4326)),
+       ('hel-06', 'Kaivopuisto', ST_MakeEnvelope(24.949, 60.149, 24.968, 60.155, 4326)),
+       ('hel-07', 'Kallio', ST_MakeEnvelope(24.945, 60.178, 24.970, 60.191, 4326)),
+       ('hel-08', 'Vallila', ST_MakeEnvelope(24.944, 60.188, 24.966, 60.197, 4326)),
+       ('hel-09', 'Hermanni', ST_MakeEnvelope(24.966, 60.188, 24.990, 60.198, 4326)),
+       ('hel-10', 'Pasila', ST_MakeEnvelope(24.924, 60.197, 24.957, 60.214, 4326)),
+       ('hel-11', 'Alppila', ST_MakeEnvelope(24.925, 60.186, 24.944, 60.194, 4326)),
+       ('hel-12', 'Kumpula', ST_MakeEnvelope(24.945, 60.204, 24.970, 60.215, 4326)),
+       ('hel-13', 'Oulunkylä', ST_MakeEnvelope(24.950, 60.225, 24.980, 60.238, 4326)),
+       ('hel-14', 'Maunula', ST_MakeEnvelope(24.910, 60.232, 24.940, 60.247, 4326)),
+       ('hel-15', 'Pakila', ST_MakeEnvelope(24.930, 60.245, 24.975, 60.265, 4326)),
+       ('hel-16', 'Lauttasaari', ST_MakeEnvelope(24.856, 60.147, 24.882, 60.169, 4326)),
+       ('hel-17', 'Munkkiniemi', ST_MakeEnvelope(24.870, 60.186, 24.890, 60.201, 4326)),
+       ('hel-18', 'Munkkivuori', ST_MakeEnvelope(24.860, 60.193, 24.880, 60.204, 4326)),
+       ('hel-19', 'Haaga', ST_MakeEnvelope(24.880, 60.215, 24.910, 60.235, 4326)),
+       ('hel-20', 'Pitäjänmäki', ST_MakeEnvelope(24.850, 60.215, 24.880, 60.235, 4326)),
+       ('hel-21', 'Arabianranta', ST_MakeEnvelope(24.975, 60.203, 25.005, 60.215, 4326)),
+       ('hel-22', 'Vanhakaupunki', ST_MakeEnvelope(24.980, 60.206, 25.015, 60.219, 4326)),
+       ('hel-23', 'Herttoniemi', ST_MakeEnvelope(25.020, 60.186, 25.055, 60.203, 4326)),
+       ('hel-24', 'Roihuvuori', ST_MakeEnvelope(25.055, 60.191, 25.085, 60.205, 4326)),
+       ('hel-25', 'Itäkeskus', ST_MakeEnvelope(25.055, 60.209, 25.090, 60.222, 4326)),
+       ('hel-26', 'Myllypuro', ST_MakeEnvelope(25.070, 60.219, 25.105, 60.233, 4326)),
+       ('hel-27', 'Kontula', ST_MakeEnvelope(25.085, 60.232, 25.120, 60.247, 4326)),
+       ('hel-28', 'Vuosaari', ST_MakeEnvelope(25.115, 60.199, 25.165, 60.226, 4326)),
+       ('hel-29', 'Tattariharju', ST_MakeEnvelope(24.995, 60.221, 25.025, 60.232, 4326)),
+       ('hel-30', 'Malmi', ST_MakeEnvelope(25.000, 60.244, 25.040, 60.265, 4326)),
+       ('hel-31', 'Pukinmäki', ST_MakeEnvelope(24.980, 60.240, 25.010, 60.255, 4326)),
+       ('hel-32', 'Tapanila', ST_MakeEnvelope(24.990, 60.258, 25.030, 60.275, 4326)),
+       ('hel-33', 'Suutarila', ST_MakeEnvelope(24.990, 60.275, 25.040, 60.295, 4326)),
+       ('hel-34', 'Jakomäki', ST_MakeEnvelope(25.065, 60.260, 25.105, 60.285, 4326)) ON CONFLICT (id) DO NOTHING;
+
+
+CREATE TABLE IF NOT EXISTS public.systems
+(
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT
+);
+
+INSERT INTO public.systems (id, name, description)
+VALUES ('traffic', 'Traffic System', ''),
+       ('utilities', 'Utilities System', ''),
+       ('emergency', 'Emergency resources System', ''),
+       ('telecom', 'Telecommunication Resources System', ''),
+       ('public_transport', 'Public Transport System', ''),
+       ('green_infrastructure', 'Green Infrastructure System', '') ON CONFLICT (id) DO NOTHING;
+
