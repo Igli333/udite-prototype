@@ -1,6 +1,6 @@
 import os
-
 import yaml
+
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import (
     col,
@@ -48,7 +48,6 @@ CHECKPOINT = os.getenv("SILVER_CHECKPOINT", "/opt/checkpoints/silver/sensors_cle
 os.makedirs(SILVER_PATH, exist_ok=True)
 os.makedirs(CHECKPOINT, exist_ok=True)
 
-
 payload_schema = StructType(
     [
         StructField("sensor_id", StringType(), True),
@@ -58,7 +57,7 @@ payload_schema = StructType(
         StructField("longitude", DoubleType(), True),
         StructField("latitude", DoubleType(), True),
         StructField("district_id", StringType(), True),
-        StructField("district_name", StringType(), True),  
+        StructField("district_name", StringType(), True),
         StructField("topic", StringType(), True),
     ]
 )

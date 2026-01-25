@@ -2,8 +2,8 @@ import json
 import os
 import threading
 import uuid
-from typing import List, Optional
 
+from typing import List, Optional
 from confluent_kafka import Producer, Consumer, KafkaError
 from fastapi import FastAPI, Query, HTTPException
 from sqlalchemy.orm import sessionmaker

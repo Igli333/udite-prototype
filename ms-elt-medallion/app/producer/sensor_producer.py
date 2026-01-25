@@ -3,8 +3,8 @@ import json
 import random
 import time
 import yaml
-from datetime import datetime, timezone, timedelta
 
+from datetime import datetime, timezone, timedelta
 from kafka import KafkaProducer
 from common.config_loader import load_config
 

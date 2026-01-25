@@ -1,4 +1,5 @@
 import os
+
 from pyspark.sql.functions import col, current_timestamp
 from app.common.spark_session import get_spark
 
@@ -16,7 +17,7 @@ spark = get_spark("bronze-kafka-to-delta")
 df = (
     spark.readStream.format("kafka")
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP)
-    .option("subscribe", TOPICS)               
+    .option("subscribe", TOPICS)
     .option("startingOffsets", "latest")
     .load()
 )
@@ -36,7 +37,7 @@ query = (
     .format("delta")
     .outputMode("append")
     .option("checkpointLocation", CHECKPOINT)
-    .option("path", BRONZE_PATH)   
+    .option("path", BRONZE_PATH)
     .start()
 )
 

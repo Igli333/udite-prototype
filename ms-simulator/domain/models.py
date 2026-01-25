@@ -1,8 +1,10 @@
+import uuid
+
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from enum import Enum
 from datetime import datetime
-import uuid
+
 
 class TriggerType(str, Enum):
     # From ms-event-classifier
@@ -21,25 +23,29 @@ class TriggerType(str, Enum):
     GAS_LEAK_DETECTED = "GAS_LEAK_DETECTED"
     BIN_OVERFLOW = "BIN_OVERFLOW"
     CELL_TOWER_DOWN = "CELL_TOWER_DOWN"
-    
+
     # Generic/Legacy
     NODE_FAILURE = "NODE_FAILURE"
     CRITICAL_METRIC = "CRITICAL_METRIC"
     MANUAL = "MANUAL"
 
+
 class SimulationRequest(BaseModel):
     trigger_type: TriggerType
-    target_id: Optional[str] = None # example: Node ID or Metric Name
-    parameters: Dict[str, Any] = {} # Extra context
+    target_id: Optional[str] = None  # example: Node ID or Metric Name
+    parameters: Dict[str, Any] = {}  # Extra context
+
 
 class Intervention(BaseModel):
     id: str
     description: str
     estimated_impact: str
 
+
 class Location(BaseModel):
     lat: float
     lng: float
+
 
 class SensorReading(BaseModel):
     """
@@ -53,9 +59,10 @@ class SensorReading(BaseModel):
     system: str
     district: str
 
+
 class SimulationResult(BaseModel):
     impact_assessment: str
-    severity_score: float # range: 0.0 to 1.0
+    severity_score: float  # range: 0.0 to 1.0
     affected_areas: List[str]
     interventions: List[Intervention]
-    simulated_metrics: Dict[str, Any] # example: {"traffic_delay": "15m"}
+    simulated_metrics: Dict[str, Any]  # example: {"traffic_delay": "15m"}
